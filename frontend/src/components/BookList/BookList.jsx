@@ -1,22 +1,24 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { removeBook, toggleFavoriteBook } from '../../redux/books/actionCreators'
+import { removeBook, toggleFavorite } from '../../redux/slices/booksSlice'
 import { BsBookmarkStarFill, BsBookmarkStar } from 'react-icons/bs'
 import { selectTitleFilter, selectAuthorFilter, selectOnlyFavoriteFilter } from '../../redux/slices/filterSlice'
+import { selectBooks } from '../../redux/slices/booksSlice'
 import './BookList.css'
 
 export const BookList = () => {
-    const books = useSelector(state => state.books)
+    const books = useSelector(selectBooks)
     const filterBooks = useSelector(selectTitleFilter)
     const filterAuthor = useSelector(selectAuthorFilter)
     const favoriteBooks = useSelector(selectOnlyFavoriteFilter)
     const dispatch = useDispatch()
+
 
     const removeBookHandler = (id) => {
         dispatch(removeBook(id))
     }
 
     const toggleFavoriteBookHandler = (id) => {
-        dispatch(toggleFavoriteBook(id))
+        dispatch(toggleFavorite(id))
     }
 
     const filteredBooks = books.filter(book => {
@@ -47,7 +49,8 @@ export const BookList = () => {
                 <ul>
                     {filteredBooks.map((book, i) => (
                         <li key={book.id}>
-                            {++i}. <div className='book-info'>{matchHilight(book.title, filterBooks)} by <strong>{matchHilight(book.author, filterAuthor)}</strong></div>
+                            {++i}. <div className='book-info'>{matchHilight(book.title, filterBooks)} by
+                                <strong>{matchHilight(book.author, filterAuthor)}</strong>({book.source})</div>
                             <div className="book-actions">
                                 <span onClick={() => toggleFavoriteBookHandler(book.id)}>
                                     {book.isFavorite ?
